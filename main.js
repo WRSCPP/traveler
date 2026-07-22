@@ -11,7 +11,7 @@ function fatal(message, detail) {
   el.innerHTML = `<div style="max-width:520px">
     <h2 style="margin:0 0 10px;font-size:19px">Traveler couldn't start</h2>
     <p style="margin:0 0 8px;line-height:1.5">${message}</p>
-    ${detail ? `<p style="margin:0;font-size:12px;color:#6b7280">${detail}</p>` : ''}
+    ${detail ? `<div style="margin:0;font-size:12.5px;color:#4b5563;line-height:1.6;text-align:left;background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:12px 14px">${detail}</div>` : ''}
   </div>`;
   document.body.appendChild(el);
 }
@@ -33,8 +33,13 @@ async function boot() {
       try {
         await backend.whenLoaded();
       } catch (err) {
-        fatal('The published schedule data could not be loaded.',
-          `Looked for ${CONFIG.DATA_URL}. If you just published, wait a moment and refresh.`);
+        const tried = (err && err.tried) || [];
+        fatal('The schedule data file is missing.',
+          `Traveler looked for <code>data/traveler-data.json</code> next to index.html and couldn't find it.
+           <br><br><b>Most likely:</b> the <code>data</code> folder didn't get uploaded with the other files.
+           <br>In your repository, check that a folder named <code>data</code> exists containing
+           <code>traveler-data.json</code>. Folder and file names are case-sensitive.
+           ${tried.length ? `<br><br><span style="font-size:11px;opacity:.75">Tried: ${tried.map((t) => String(t).replace(/</g, '&lt;')).join(' · ')}</span>` : ''}`);
         return;
       }
       addBanner(CONFIG.READONLY_NOTE || 'Read-only view');

@@ -34,18 +34,45 @@ export function createStaticBackend(dataUrl) {
   let ready = null;
   let data = Object.fromEntries(STORES.map((s) => [s, new Map()]));
 
+  // Try the configured location first, then the most common places the file
+  // ends up when a folder doesn't survive an upload. This makes publishing
+  // forgiving rather than all-or-nothing.
+  const candidates = [...new Set([
+    dataUrl,
+    './data/traveler-data.json',
+    './traveler-data.json',
+    './data/traveler-data.JSON',
+  ].filter(Boolean))];
+
+  async function fetchFirst() {
+    const tried = [];
+    for (const url of candidates) {
+      try {
+        const r = await fetch(url, { cache: 'no-store' });
+        if (!r.ok) { tried.push(`${url} (${r.status})`); continue; }
+        // A missing file on some hosts returns the HTML 404 page with a 200.
+        const text = await r.text();
+        if (/^\s*</.test(text)) { tried.push(`${url} (not JSON)`); continue; }
+        return { json: JSON.parse(text), url };
+      } catch (e) {
+        tried.push(`${url} (${e.message})`);
+      }
+    }
+    const err = new Error('No data file found');
+    err.tried = tried;
+    throw err;
+  }
+
   function load() {
     if (ready) return ready;
-    ready = fetch(dataUrl, { cache: 'no-store' })
-      .then((r) => {
-        if (!r.ok) throw new Error(`Could not load data (${r.status})`);
-        return r.json();
+    ready = fetchFirst()
+      .then(({ json, url }) => {
+        data = toMaps(json);
+        const total = STORES.reduce((n, s) => n + data[s].size, 0);
+        console.info(`Traveler: loaded ${total} records from ${url}`);
       })
-      .then((json) => { data = toMaps(json); })
       .catch((err) => {
-        // Leave the maps empty; the app shows its normal empty states and we
-        // surface a clear message rather than failing silently.
-        console.error('Traveler: failed to load published data —', err);
+        console.error('Traveler: failed to load published data —', err.tried || err);
         throw err;
       });
     return ready;
