@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Traveler — Production Planning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<header>
+  <div class="brand"><h1>Traveler</h1><span class="sub">Production Planning</span></div>
+  <div id="headerStats" class="header-stats"></div>
+  <div class="header-actions"><button class="btn primary" id="newBuildBtn">+ New Build</button></div>
+</header>
+
+<nav class="tabbar">
+  <button class="tab active" data-tab="dashboard">Dashboard</button>
+  <button class="tab" data-tab="gantt">Gantt</button>
+  <button class="tab" data-tab="board">Board</button>
+  <button class="tab" data-tab="shop">Shop Overview</button>
+  <button class="tab" data-tab="hours">Build Hours</button>
+  <button class="tab" data-tab="pipeline">Pipeline</button>
+  <button class="tab" data-tab="reports">Reports</button>
+  <button class="tab" data-tab="settings">Settings</button>
+</nav>
+
+<div class="filterbar" id="filterBar">
+  <input type="text" class="search" id="searchInput" placeholder="Search builds, clients, IDs…">
+  <select id="lineFilter"><option value="all">All lines</option></select>
+</div>
+
+<main>
+  <section class="view active" id="view-dashboard"><div id="dashboardRoot"></div></section>
+  <section class="view" id="view-gantt"><div id="ganttRoot"></div></section>
+  <section class="view" id="view-board"><div id="boardRoot" class="board"></div></section>
+  <section class="view" id="view-shop"><div id="shopRoot"></div></section>
+  <section class="view" id="view-hours"><div id="hoursRoot"></div></section>
+  <section class="view" id="view-pipeline"><div id="pipelineRoot"></div></section>
+  <section class="view" id="view-reports"><div id="reportsRoot"></div></section>
+  <section class="view" id="view-settings"><div id="settingsRoot"></div></section>
+</main>
+
+<div class="overlay" id="buildOverlay"><div class="modal" id="buildModal"></div></div>
+<div class="overlay" id="bayPickerOverlay"><div class="modal modal-sm" id="bayPickerModal"></div></div>
+
+<script>
+  // Populate line filter once lines exist — app.js drives the rest.
+  window.addEventListener('DOMContentLoaded', () => {});
+</script>
+<script type="module" src="./main.js"></script>
+</body>
+</html>
