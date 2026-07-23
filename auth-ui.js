@@ -5,14 +5,14 @@
 import { signIn, signOut, onAuthChange } from './store-cloud.js';
 
 export function mountAuthUI(session) {
-  // Mount the auth box directly on <body> as a fixed element, NOT inside the
-  // header. The app re-renders the header on every view change, which would wipe
-  // a button placed there; a body-level element is untouched by those renders.
-  let wrap = document.querySelector('.auth-box');
+  // Use the permanent container that lives in index.html. It always exists, so
+  // the button can't fail to appear due to render timing.
+  let wrap = document.getElementById('authBox') || document.querySelector('.auth-box');
   if (!wrap) {
     wrap = document.createElement('div');
     wrap.className = 'auth-box';
-    document.body.appendChild(wrap);
+    wrap.id = 'authBox';
+    (document.querySelector('.header-actions') || document.body).appendChild(wrap);
   }
 
   const render = (s) => {

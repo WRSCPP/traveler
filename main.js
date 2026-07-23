@@ -86,10 +86,11 @@ async function boot() {
       setTimeout(enableReadOnly, 300);
     }
 
-    // Mount sign-in LAST, so it survives the app's header render and the lock
-    // never touches it. A small delay lets the first render settle.
+    // Mount sign-in. The container lives in index.html so it always exists; a
+    // tiny delay just lets the read-only sweep run first so we can re-enable it.
     if (globalThis.__TRAVELER_MOUNT_AUTH__) {
-      setTimeout(() => globalThis.__TRAVELER_MOUNT_AUTH__(), 450);
+      globalThis.__TRAVELER_MOUNT_AUTH__();
+      setTimeout(() => globalThis.__TRAVELER_MOUNT_AUTH__(), 500);
     }
   } catch (err) {
     fatal('Something went wrong while starting up.', String(err && err.message || err));
