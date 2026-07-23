@@ -68,8 +68,13 @@ async function boot() {
            <br>• The Supabase project is paused (free projects pause after ~1 week idle) — open your Supabase dashboard to wake it.`);
         return;
       }
-      const { mountAuthUI } = await import('./auth-ui.js');
-      mountAuthUI(session);
+      // Remember to mount the sign-in UI, but only AFTER the app has rendered and
+      // the read-only lock has run — otherwise the app's own header render wipes
+      // the button and the lock disables it.
+      globalThis.__TRAVELER_MOUNT_AUTH__ = async () => {
+        const { mountAuthUI } = await import('./auth-ui.js');
+        mountAuthUI(session);
+      };
     }
     // 'local' needs no setup — store.js falls through to IndexedDB.
 
@@ -79,6 +84,12 @@ async function boot() {
     if (document.body.classList.contains('readonly')) {
       const { enableReadOnly } = await import('./readonly.js');
       setTimeout(enableReadOnly, 300);
+    }
+
+    // Mount sign-in LAST, so it survives the app's header render and the lock
+    // never touches it. A small delay lets the first render settle.
+    if (globalThis.__TRAVELER_MOUNT_AUTH__) {
+      setTimeout(() => globalThis.__TRAVELER_MOUNT_AUTH__(), 450);
     }
   } catch (err) {
     fatal('Something went wrong while starting up.', String(err && err.message || err));

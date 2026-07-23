@@ -15,6 +15,9 @@ const ALLOWED = [
 ].join(',');
 
 function lockField(el) {
+  // The sign-in button and its dialog must NEVER be locked — it's the only way a
+  // viewer becomes an editor. Skip anything inside the auth UI, always.
+  if (el.closest('.auth-box, .auth-overlay, .auth-modal') || el.matches('[data-auth]')) return;
   if (el.matches(ALLOWED) || el.closest(ALLOWED)) return;
   if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
     if (el.type === 'file') { el.disabled = true; return; }
