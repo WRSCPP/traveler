@@ -16,7 +16,7 @@
 // included schema.sql turns on. Never put a service_role key in this file.
 
 export const CONFIG = {
-  MODE: 'static',
+  MODE: 'cloud',
 
   // --- 'static' (read-only) settings ---
   // Path to the exported data snapshot, relative to index.html.
@@ -24,8 +24,8 @@ export const CONFIG = {
 
   // --- 'cloud' settings ---
   SUPABASE: {
-    URL: '',      // e.g. 'https://abcdefgh.supabase.co'
-    ANON_KEY: '', // the "anon public" key from Supabase → Settings → API
+    URL: 'https://temufmvatmsvxnmqcnal.supabase.co',
+    ANON_KEY: 'sb_publishable_wya2GJP7tX6U8rNibAm6PQ_S5-wiaeG',
   },
 
   // Banner text shown at the top of the read-only site.
